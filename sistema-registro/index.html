@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#1a3a6b">
+  <title>Funerales Concepción — Sistema de Registro</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <img class="header-logo" src="assets/logo.jpg" alt="Funerales Concepción">
+    <div class="header-text">
+      <h1>Funerales Concepción</h1>
+      <p>Sistema de Registro</p>
+    </div>
+  </div>
+</header>
+
+<!-- NAV BOTTOM (celular) + TOP (escritorio) -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" id="nav-inicio" onclick="mostrarPagina('inicio')">
+      <span class="nav-icon">🏠</span><span class="nav-label">Inicio</span>
+    </button>
+    <button class="nav-btn" id="nav-fallecidos" onclick="mostrarPagina('fallecidos')">
+      <span class="nav-icon">📋</span><span class="nav-label">Fallecidos</span>
+    </button>
+    <button class="nav-btn" id="nav-cocode" onclick="mostrarPagina('cocode')">
+      <span class="nav-icon">👥</span><span class="nav-label">COCODE</span>
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- INICIO -->
+  <div class="page active" id="page-inicio">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div>
+          <div class="stat-number" id="stat-fallecidos">—</div>
+          <div class="stat-label">Fallecidos registrados</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div>
+          <div class="stat-number" id="stat-cocode">—</div>
+          <div class="stat-label">Miembros COCODE</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📍</div>
+        <div>
+          <div class="stat-number" id="stat-localidades">—</div>
+          <div class="stat-label">Localidades</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Acceso rápido</div>
+      <div class="quick-access">
+        <button class="quick-btn" onclick="mostrarPagina('fallecidos'); setTimeout(()=>document.getElementById('f-form-section').scrollIntoView({behavior:'smooth'}),100)">
+          <span>➕</span> Nuevo fallecido
+        </button>
+        <button class="quick-btn" onclick="mostrarPagina('cocode'); setTimeout(()=>document.getElementById('c-form-section').scrollIntoView({behavior:'smooth'}),100)">
+          <span>➕</span> Nuevo miembro COCODE
+        </button>
+        <button class="quick-btn" onclick="mostrarPagina('fallecidos')">
+          <span>🔍</span> Buscar fallecidos
+        </button>
+        <button class="quick-btn" onclick="mostrarPagina('cocode')">
+          <span>🔍</span> Buscar COCODE
+        </button>
+      </div>
+    </div>
+
+   
+
+  <!-- FALLECIDOS -->
+  <div class="page" id="page-fallecidos">
+    <div class="card" id="f-form-section">
+      <div class="card-title">📋 Registrar Fallecido</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="f-nombre">Nombre completo *</label>
+          <input type="text" id="f-nombre" placeholder="Nombre del fallecido" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="f-fecha">Fecha de fallecimiento *</label>
+          <input type="date" id="f-fecha">
+        </div>
+        <div class="form-group">
+          <label for="f-localidad">Localidad / Comunidad *</label>
+          <input type="text" id="f-localidad" placeholder="Aldea, cantón o municipio">
+        </div>
+        <div class="form-group">
+          <label for="f-notas">Notas adicionales</label>
+          <input type="text" id="f-notas" placeholder="Observaciones...">
+        </div>
+        <div class="form-group full-width">
+          <label>Imagen del informe</label>
+          <div class="upload-area" onclick="document.getElementById('f-imagen').click()">
+            <span class="upload-icon">📄</span>
+            <p>Toca aquí para subir el informe</p>
+            <small>Foto o imagen del informe de fallecimiento</small>
+            <input type="file" id="f-imagen" accept="image/*" capture="environment" style="display:none;">
+          </div>
+          <img id="f-preview" class="preview-img" style="display:none;" alt="Vista previa">
+          <div class="progress-bar" id="f-progress"><div class="progress-fill"></div></div>
+        </div>
+      </div>
+      <div id="f-msg" class="msg"></div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="f-btn-guardar" onclick="Fallecidos.guardar()">💾 Guardar</button>
+        <button class="btn btn-secondary" onclick="Fallecidos.limpiarFormulario()">✖ Limpiar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        🔍 Registros
+        <span class="badge badge-blue" style="margin-left:auto;">
+          <span id="f-total">0</span> registros
+        </span>
+      </div>
+      <div class="search-bar">
+        <input type="search" id="f-buscar" placeholder="🔍 Buscar por nombre...">
+        <input type="text" id="f-filtro-localidad" placeholder="📍 Filtrar localidad...">
+      </div>
+      <div class="records-grid" id="f-lista">
+        <div class="empty-state"><span class="empty-icon">📋</span><p>Cargando...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COCODE -->
+  <div class="page" id="page-cocode">
+    <div class="card" id="c-form-section">
+      <div class="card-title">👤 Registrar Miembro COCODE</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="c-nombre">Nombre completo *</label>
+          <input type="text" id="c-nombre" placeholder="Nombre del miembro">
+        </div>
+        <div class="form-group">
+          <label for="c-cargo">Cargo / Función *</label>
+          <input type="text" id="c-cargo" placeholder="Presidente, Vocal I, Tesorero...">
+        </div>
+        <div class="form-group">
+          <label for="c-localidad">Localidad *</label>
+          <input type="text" id="c-localidad" placeholder="Comunidad o aldea">
+        </div>
+        <div class="form-group">
+          <label for="c-telefono">Teléfono</label>
+          <input type="tel" id="c-telefono" placeholder="1234-5678">
+        </div>
+        <div class="form-group">
+          <label for="c-dpi">No. DPI</label>
+          <input type="text" id="c-dpi" placeholder="Número de DPI" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label for="c-correo">Correo electrónico</label>
+          <input type="email" id="c-correo" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group full-width">
+          <label for="c-direccion">Dirección</label>
+          <input type="text" id="c-direccion" placeholder="Dirección completa">
+        </div>
+        <div class="form-group full-width">
+          <label for="c-notas">Notas</label>
+          <textarea id="c-notas" placeholder="Información adicional..." rows="3"></textarea>
+        </div>
+        <div class="form-group full-width">
+          <label>Fotografía</label>
+          <div class="upload-area" onclick="document.getElementById('c-foto').click()">
+            <span class="upload-icon">📷</span>
+            <p>Toca para subir o tomar foto</p>
+            <small>JPG o PNG</small>
+            <input type="file" id="c-foto" accept="image/*" capture="user" style="display:none;">
+          </div>
+          <img id="c-preview" class="preview-img" style="display:none;" alt="Foto miembro">
+        </div>
+      </div>
+      <div id="c-msg" class="msg"></div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="c-btn-guardar" onclick="Cocode.guardar()">💾 Guardar</button>
+        <button class="btn btn-secondary" onclick="Cocode.limpiarFormulario()">✖ Limpiar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        🔍 Miembros COCODE
+        <span class="badge badge-blue" style="margin-left:auto;"><span id="c-total">0</span> miembros</span>
+      </div>
+      <div class="search-bar">
+        <input type="search" id="c-buscar" placeholder="🔍 Buscar nombre...">
+        <input type="text" id="c-filtro-localidad" placeholder="📍 Localidad...">
+        <input type="text" id="c-filtro-cargo" placeholder="🏛️ Cargo...">
+      </div>
+      <button class="btn btn-success btn-full" onclick="Cocode.descargarPDFLocalidad()" style="margin-bottom:16px;">
+        📥 Descargar PDF por localidad
+      </button>
+      <div class="records-grid" id="c-lista">
+        <div class="empty-state"><span class="empty-icon">👥</span><p>Cargando...</p></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- NAV MOBILE BOTTOM BAR -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bottom-btn active" id="bottom-inicio" onclick="mostrarPagina('inicio')">
+    <span>🏠</span><span>Inicio</span>
+  </button>
+  <button class="bottom-btn" id="bottom-fallecidos" onclick="mostrarPagina('fallecidos')">
+    <span>📋</span><span>Fallecidos</span>
+  </button>
+  <button class="bottom-btn" id="bottom-cocode" onclick="mostrarPagina('cocode')">
+    <span>👥</span><span>COCODE</span>
+  </button>
+</nav>
+
+<script src="firebase-config.js"></script>
+<script src="js/fallecidos.js"></script>
+<script src="js/cocode.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

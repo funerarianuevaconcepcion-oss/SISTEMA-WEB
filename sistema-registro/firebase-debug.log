@@ -1,0 +1,40 @@
+[debug] [2026-06-23T15:54:22.515Z] ----------------------------------------------------------------------
+[debug] [2026-06-23T15:54:22.531Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Concepcion\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login:ci
+[debug] [2026-06-23T15:54:22.533Z] CLI Version:   15.22.1
+[debug] [2026-06-23T15:54:22.533Z] Platform:      win32
+[debug] [2026-06-23T15:54:22.534Z] Node Version:  v24.17.0
+[debug] [2026-06-23T15:54:22.535Z] Detected Agent: unknown
+[debug] [2026-06-23T15:54:22.535Z] Time:          Tue Jun 23 2026 09:54:22 GMT-0600 (hora estándar central)
+[debug] [2026-06-23T15:54:22.536Z] ----------------------------------------------------------------------
+[debug] 
+[warn] !  Authenticating with a `login:ci` token is deprecated and will be removed in a future major version of `firebase-tools`. Instead, use a service account key with `GOOGLE_APPLICATION_CREDENTIALS`: https://cloud.google.com/docs/authentication/getting-started 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=520601737&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
+[debug] [2026-06-23T15:55:07.924Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2026-06-23T15:55:07.925Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2026-06-23T15:55:08.484Z] Token Fetch Error: FirebaseError: FetchError: Invalid response body while trying to fetch https://accounts.google.com/o/oauth2/token: Premature close
+    at RetryOperation._fn (C:\Users\Concepcion\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:317:88)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2026-06-23T15:55:08.540Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-06-23T15:55:08.541Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"e520351a-c72d-45f6-ad64-6a4c62878097"}
+[debug] [2026-06-23T15:55:09.089Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-06-23T15:55:09.090Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"xA1f_b_y8IJC7Gsi8zp1_LjTWtjSsPlbQ-pt_66N2rs"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    E5203
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=YRV1m2EfFP_lAi-L4aYuNf5veKU4JwFQKIPbhmlQTN4&session=e520351a-c72d-45f6-ad64-6a4c62878097&attest=xA1f_b_y8IJC7Gsi8zp1_LjTWtjSsPlbQ-pt_66N2rs
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
